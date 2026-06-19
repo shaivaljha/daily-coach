@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daily Learning Coach</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface2: #f1f0ec;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --text: #1a1a18;
+    --text2: #5a5a56;
+    --text3: #8a8a84;
+    --accent: #534AB7;
+    --accent-bg: #EEEDFE;
+    --accent-light: #CECBF6;
+    --radius-md: 8px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161614;
+      --surface: #1f1f1d;
+      --surface2: #2a2a27;
+      --border: rgba(255,255,255,0.10);
+      --border2: rgba(255,255,255,0.20);
+      --text: #f0efe9;
+      --text2: #a8a89e;
+      --text3: #6a6a62;
+      --accent: #8B84E0;
+      --accent-bg: #1e1c3a;
+      --accent-light: #2d2960;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* Header */
+  .app-header { margin-bottom: 2rem; }
+  .app-header .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .app-header h1 {
+    font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2;
+  }
+  .app-header p { font-size: 14px; color: var(--text2); margin-top: 6px; }
+
+  /* Card */
+  .card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+  }
+
+  /* Topic chips */
+  .topic-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid; cursor: default; transition: opacity 0.15s;
+  }
+  .chip .remove {
+    cursor: pointer; font-size: 16px; line-height: 1;
+    opacity: 0.6; transition: opacity 0.15s;
+  }
+  .chip .remove:hover { opacity: 1; }
+
+  .add-row { display: flex; gap: 8px; }
+  .add-row input {
+    flex: 1; padding: 9px 14px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border2); background: var(--surface2);
+    color: var(--text); font-size: 13px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .add-row input:focus { border-color: var(--accent); }
+  .add-row input::placeholder { color: var(--text3); }
+  .add-row button {
+    padding: 9px 16px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border2); background: var(--surface2);
+    color: var(--text); font-size: 13px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .add-row button:hover { background: var(--border); }
+
+  /* Controls row */
+  .controls-row {
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap; margin-bottom: 1rem;
+  }
+  .controls-row label { font-size: 13px; color: var(--text2); }
+  .controls-row select {
+    padding: 8px 12px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border2); background: var(--surface);
+    color: var(--text); font-size: 13px; cursor: pointer; outline: none;
+  }
+
+  /* Generate button */
+  .gen-btn {
+    width: 100%; padding: 14px; border-radius: var(--radius-lg);
+    border: 1.5px solid var(--accent); background: var(--accent-bg);
+    color: var(--accent); font-size: 15px; font-weight: 600;
+    cursor: pointer; margin-bottom: 1.5rem;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .gen-btn:hover { background: var(--accent-light); }
+  .gen-btn:active { transform: scale(0.99); }
+  .gen-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* Lesson cards */
+  .lesson-card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg); margin-bottom: 1rem; overflow: hidden;
+  }
+  .lesson-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; cursor: pointer;
+    border-bottom: 0.5px solid transparent; transition: border-color 0.2s;
+  }
+  .lesson-header.open { border-bottom-color: var(--border); }
+  .lesson-title-row { display: flex; align-items: center; gap: 10px; }
+  .topic-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .lesson-topic-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .lesson-meta { font-size: 12px; color: var(--text3); }
+  .chevron {
+    font-size: 18px; color: var(--text3);
+    transition: transform 0.2s; display: inline-block;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .lesson-body {
+    padding: 20px 20px 20px; display: none;
+    font-size: 14px; line-height: 1.8; color: var(--text);
+  }
+  .lesson-body.open { display: block; }
+
+  .lesson-body .sec-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; margin-top: 1.2rem; margin-bottom: 6px;
+  }
+  .lesson-body .sec-title:first-child { margin-top: 0; }
+
+  .lesson-body p { margin-bottom: 6px; }
+
+  .lesson-body ul { margin-left: 1.3rem; }
+  .lesson-body li { margin-bottom: 5px; }
+
+  .callout {
+    padding: 12px 16px; border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-left: 3px solid; background: var(--surface2);
+    font-size: 13px; font-style: italic; margin-top: 4px; line-height: 1.65;
+  }
+
+  /* Shimmer loading */
+  .shimmer-wrap { padding: 4px 0; }
+  .shimmer {
+    height: 13px; border-radius: 6px; background: var(--surface2);
+    margin-bottom: 10px; animation: shim 1.3s ease-in-out infinite;
+  }
+  @keyframes shim { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* Pulse dot */
+  .pulse-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #5DCAA5; margin-right: 8px; vertical-align: middle;
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* Footer */
+  .footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 2.5rem; }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  /* Day streak */
+  .streak-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #FAEEDA; color: #854F0B;
+    border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600;
+    margin-top: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .streak-badge { background: #2a1e08; color: #EF9F27; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="app-header">
+    <div class="eyebrow">&#127775; AI-Powered</div>
+    <h1>Daily Learning Coach</h1>
+    <p>A fresh 10–15 minute lesson on each of your topics, every day.</p>
+    <div class="streak-badge" id="streakBadge">&#128293; Loading streak…</div>
+  </div>
+
+  <!-- Topics card -->
+  <div class="card">
+    <div class="section-label">Your topics</div>
+    <div class="topic-chips" id="chips"></div>
+    <div class="add-row">
+      <input type="text" id="newTopic" placeholder="Add a topic, e.g. Stoicism, FEM Analysis, Nutrition…" />
+      <button onclick="addTopic()">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <label for="depthSelect">Your level:</label>
+    <select id="depthSelect">
+      <option value="beginner">Beginner — start from scratch</option>
+      <option value="intermediate" selected>Intermediate — I know the basics</option>
+      <option value="advanced">Advanced — go deep &amp; technical</option>
+    </select>
+    <label for="langSelect">Language:</label>
+    <select id="langSelect">
+      <option value="English" selected>English</option>
+      <option value="Hindi">Hindi</option>
+    </select>
+  </div>
+
+  <button class="gen-btn" id="genBtn" onclick="generateLessons()">
+    &#9654;&#65039; Generate today's lessons
+  </button>
+
+  <div id="lessonArea"></div>
+
+  <div class="footer">
+    Built with the Anthropic API &mdash; runs 100% in your browser.<br/>
+    Bookmark this file and open it daily. No installation needed.
+  </div>
+
+</div>
+
+<script>
+const COLORS = ['#534AB7','#0F6E56','#993C1D','#185FA5','#3B6D11','#854F0B','#993556'];
+const BG_COLORS = ['#EEEDFE','#E1F5EE','#FAECE7','#E6F1FB','#EAF3DE','#FAEEDA','#FBEAF0'];
+
+const DEFAULT_TOPICS = ['Wealth','Health','Mechanical Design'];
+let topics = JSON.parse(localStorage.getItem('dlc_topics') || 'null') || DEFAULT_TOPICS;
+let openState = {};
+
+function saveTopics() { localStorage.setItem('dlc_topics', JSON.stringify(topics)); }
+
+function renderChips() {
+  const c = document.getElementById('chips');
+  c.innerHTML = topics.map((t,i) => `
+    <span class="chip" style="background:${BG_COLORS[i%7]};border-color:${COLORS[i%7]};color:${COLORS[i%7]};">
+      ${t}
+      <span class="remove" onclick="removeTopic(${i})" title="Remove topic">&#215;</span>
+    </span>
+  `).join('') || '<span style="font-size:13px;color:var(--text3);">No topics yet — add one below.</span>';
+}
+
+function addTopic() {
+  const inp = document.getElementById('newTopic');
+  const val = inp.value.trim();
+  if (val && !topics.map(t=>t.toLowerCase()).includes(val.toLowerCase())) {
+    topics.push(val); saveTopics(); renderChips();
+  }
+  inp.value = '';
+  inp.focus();
+}
+
+function removeTopic(i) {
+  topics.splice(i,1); saveTopics(); renderChips();
+  document.getElementById('lessonArea').innerHTML = '';
+}
+
+document.getElementById('newTopic').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTopic();
+});
+
+// Streak logic
+function updateStreak() {
+  const today = new Date().toDateString();
+  const last = localStorage.getItem('dlc_last_date');
+  let streak = parseInt(localStorage.getItem('dlc_streak') || '0');
+  if (last === today) {
+    // same day, keep streak
+  } else if (last === new Date(Date.now() - 86400000).toDateString()) {
+    streak++;
+    localStorage.setItem('dlc_streak', streak);
+    localStorage.setItem('dlc_last_date', today);
+  } else {
+    streak = 1;
+    localStorage.setItem('dlc_streak', 1);
+    localStorage.setItem('dlc_last_date', today);
+  }
+  const el = document.getElementById('streakBadge');
+  el.textContent = streak > 1 ? `\uD83D\uDD25 ${streak}-day streak!` : '\uD83C\uDF31 Day 1 — welcome!';
+}
+
+function toggleCard(id) {
+  openState[id] = !openState[id];
+  document.getElementById('body-'+id).classList.toggle('open', openState[id]);
+  document.getElementById('hdr-'+id).classList.toggle('open', openState[id]);
+  document.getElementById('chev-'+id).classList.toggle('open', openState[id]);
+}
+
+async function generateLessons() {
+  if (!topics.length) { alert('Please add at least one topic first!'); return; }
+  const btn = document.getElementById('genBtn');
+  const area = document.getElementById('lessonArea');
+  const depth = document.getElementById('depthSelect').value;
+  const lang = document.getElementById('langSelect').value;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="pulse-dot"></span> Generating your lessons…';
+  area.innerHTML = '';
+  openState = {};
+
+  updateStreak();
+
+  const date = new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  for (let i = 0; i < topics.length; i++) {
+    const t = topics[i];
+    const color = COLORS[i % 7];
+    const id = 'lesson'+i;
+    openState[id] = true;
+
+    area.innerHTML += `
+      <div class="lesson-card" id="lc-${id}">
+        <div class="lesson-header open" id="hdr-${id}" onclick="toggleCard('${id}')">
+          <div class="lesson-title-row">
+            <div class="topic-dot" style="background:${color};"></div>
+            <span class="lesson-topic-name">${t}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="lesson-meta">${date}</span>
+            <span class="chevron open" id="chev-${id}">&#8964;</span>
+          </div>
+        </div>
+        <div class="lesson-body open" id="body-${id}">
+          <div class="shimmer-wrap">
+            <div class="shimmer" style="width:70%;"></div>
+            <div class="shimmer" style="width:90%;"></div>
+            <div class="shimmer" style="width:55%;"></div>
+            <div class="shimmer" style="width:80%;"></div>
+            <div class="shimmer" style="width:40%;"></div>
+          </div>
+        </div>
+      </div>`;
+
+    fetchLesson(t, depth, lang, id, color, date);
+  }
+
+  btn.innerHTML = '&#8635; Refresh today\'s lessons';
+  btn.disabled = false;
+}
+
+async function fetchLesson(topic, depth, lang, id, color, date) {
+  const body = document.getElementById('body-'+id);
+  const depthDesc = {
+    beginner: 'The learner is a complete beginner. Start from the very basics. Use simple analogies.',
+    intermediate: 'The learner has basic familiarity but wants to go deeper with real substance.',
+    advanced: 'The learner is experienced. Go deep, be technical, challenge them with nuanced insights.'
+  }[depth];
+
+  const prompt = `You are a brilliant personal mentor giving a focused daily lesson. Today is ${date}.
+
+TOPIC: ${topic}
+LEVEL: ${depthDesc}
+LANGUAGE: Respond entirely in ${lang}.
+
+Write a structured daily lesson with EXACTLY these 5 sections (use the section names as headings):
+
+TODAY'S CONCEPT
+[Pick one focused, memorable concept or principle for today. Give it a short punchy name. 2-3 sentences.]
+
+THE CORE IDEA
+[Explain the concept clearly. Use one vivid real-world example or analogy. 4-6 sentences.]
+
+KEY PRINCIPLES
+[Exactly 3 bullet points — the most important things to understand about today's concept. Each bullet 1-2 sentences.]
+
+PRACTICAL APPLICATION
+[One concrete action or mental exercise the learner can do in 5-10 minutes today. Be very specific. 3-4 sentences.]
+
+REFLECTION QUESTION
+[One deep, thought-provoking question to sit with today. Just the question.]
+
+Keep it warm, direct, like a mentor speaking — not a textbook. No markdown symbols, no asterisks, no hashes.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API error');
+    }
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    renderLesson(body, text, color);
+  } catch(e) {
+    body.innerHTML = `<p style="color:#E24B4A;font-size:13px;">&#9888; Could not load lesson: ${e.message}<br/><br/>Make sure you have an internet connection and try refreshing.</p>`;
+  }
+}
+
+const SECTIONS = [
+  { key: 'TODAY\'S CONCEPT', type: 'normal' },
+  { key: 'THE CORE IDEA', type: 'normal' },
+  { key: 'KEY PRINCIPLES', type: 'bullets' },
+  { key: 'PRACTICAL APPLICATION', type: 'normal' },
+  { key: 'REFLECTION QUESTION', type: 'callout' }
+];
+
+function renderLesson(body, text, color) {
+  let html = '';
+  for (let i = 0; i < SECTIONS.length; i++) {
+    const sec = SECTIONS[i];
+    const nextKey = SECTIONS[i+1]?.key;
+    const startIdx = text.indexOf(sec.key);
+    if (startIdx === -1) continue;
+    const afterKey = startIdx + sec.key.length;
+    const endIdx = nextKey ? text.indexOf(nextKey, afterKey) : text.length;
+    const raw = text.slice(afterKey, endIdx === -1 ? text.length : endIdx).replace(/^[\s:\-–]+/, '').trim();
+
+    html += `<div class="sec-title" style="color:${color};">${sec.key}</div>`;
+
+    if (sec.type === 'bullets') {
+      const lines = raw.split('\n').map(l => l.replace(/^[\-•*\d.]+\s*/, '').trim()).filter(Boolean);
+      html += '<ul>' + lines.map(l => `<li>${l}</li>`).join('') + '</ul>';
+    } else if (sec.type === 'callout') {
+      html += `<div class="callout" style="border-left-color:${color};">${raw}</div>`;
+    } else {
+      const paras = raw.split('\n').filter(l => l.trim());
+      html += paras.map(p => `<p>${p}</p>`).join('');
+    }
+  }
+  body.innerHTML = html || `<p style="white-space:pre-wrap;">${text}</p>`;
+}
+
+// Init
+renderChips();
+</script>
+</body>
+</html>
