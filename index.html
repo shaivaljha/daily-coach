@@ -281,9 +281,9 @@ let openState = {};
 function saveKey() {
   const val = document.getElementById('apiKeyInput').value.trim();
   const status = document.getElementById('keyStatus');
-  if (!val.startsWith('AIza')) {
+  if (!val || val.length < 10) {
     status.className = 'key-status err';
-    status.textContent = '⚠ That does not look like a valid Gemini key. It should start with AIza…';
+    status.textContent = '⚠ Please paste a valid API key.';
     return;
   }
   localStorage.setItem('dlc_gemini_key', val);
