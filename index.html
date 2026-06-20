@@ -50,30 +50,47 @@
 
   .container { max-width: 720px; margin: 0 auto; }
 
-  /* Header */
   .app-header { margin-bottom: 2rem; }
   .app-header .eyebrow {
     font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
     text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
   }
-  .app-header h1 {
-    font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2;
-  }
+  .app-header h1 { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2; }
   .app-header p { font-size: 14px; color: var(--text2); margin-top: 6px; }
 
-  /* Card */
   .card {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem;
   }
 
-  /* Section label */
   .section-label {
     font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
   }
 
-  /* Topic chips */
+  /* API Key input */
+  .api-key-row { display: flex; gap: 8px; align-items: center; }
+  .api-key-row input {
+    flex: 1; padding: 9px 14px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--border2); background: var(--surface2);
+    color: var(--text); font-size: 13px; outline: none;
+    font-family: monospace; letter-spacing: 0.04em;
+    transition: border-color 0.15s;
+  }
+  .api-key-row input:focus { border-color: var(--accent); }
+  .api-key-row input::placeholder { color: var(--text3); font-family: inherit; letter-spacing: 0; }
+  .key-status {
+    font-size: 12px; margin-top: 6px;
+    padding: 6px 10px; border-radius: var(--radius-md);
+    display: none;
+  }
+  .key-status.ok { display: block; background: #E1F5EE; color: #0F6E56; }
+  .key-status.err { display: block; background: #FAECE7; color: #993C1D; }
+  @media (prefers-color-scheme: dark) {
+    .key-status.ok { background: #0d2e22; color: #4ecb96; }
+    .key-status.err { background: #2e130d; color: #f08070; }
+  }
+
   .topic-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .chip {
     display: inline-flex; align-items: center; gap: 6px;
@@ -103,7 +120,6 @@
   }
   .add-row button:hover { background: var(--border); }
 
-  /* Controls row */
   .controls-row {
     display: flex; align-items: center; gap: 12px;
     flex-wrap: wrap; margin-bottom: 1rem;
@@ -115,7 +131,6 @@
     color: var(--text); font-size: 13px; cursor: pointer; outline: none;
   }
 
-  /* Generate button */
   .gen-btn {
     width: 100%; padding: 14px; border-radius: var(--radius-lg);
     border: 1.5px solid var(--accent); background: var(--accent-bg);
@@ -127,7 +142,6 @@
   .gen-btn:active { transform: scale(0.99); }
   .gen-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  /* Lesson cards */
   .lesson-card {
     background: var(--surface); border: 0.5px solid var(--border);
     border-radius: var(--radius-lg); margin-bottom: 1rem; overflow: hidden;
@@ -149,29 +163,24 @@
   .chevron.open { transform: rotate(180deg); }
 
   .lesson-body {
-    padding: 20px 20px 20px; display: none;
+    padding: 20px; display: none;
     font-size: 14px; line-height: 1.8; color: var(--text);
   }
   .lesson-body.open { display: block; }
-
   .lesson-body .sec-title {
     font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
     text-transform: uppercase; margin-top: 1.2rem; margin-bottom: 6px;
   }
   .lesson-body .sec-title:first-child { margin-top: 0; }
-
   .lesson-body p { margin-bottom: 6px; }
-
   .lesson-body ul { margin-left: 1.3rem; }
   .lesson-body li { margin-bottom: 5px; }
-
   .callout {
     padding: 12px 16px; border-radius: 0 var(--radius-md) var(--radius-md) 0;
     border-left: 3px solid; background: var(--surface2);
     font-size: 13px; font-style: italic; margin-top: 4px; line-height: 1.65;
   }
 
-  /* Shimmer loading */
   .shimmer-wrap { padding: 4px 0; }
   .shimmer {
     height: 13px; border-radius: 6px; background: var(--surface2);
@@ -179,7 +188,6 @@
   }
   @keyframes shim { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-  /* Pulse dot */
   .pulse-dot {
     display: inline-block; width: 8px; height: 8px; border-radius: 50%;
     background: #5DCAA5; margin-right: 8px; vertical-align: middle;
@@ -187,11 +195,8 @@
   }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  /* Footer */
   .footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 2.5rem; }
-  .footer a { color: var(--accent); text-decoration: none; }
 
-  /* Day streak */
   .streak-badge {
     display: inline-flex; align-items: center; gap: 5px;
     background: #FAEEDA; color: #854F0B;
@@ -204,7 +209,6 @@
 </style>
 </head>
 <body>
-
 <div class="container">
 
   <div class="app-header">
@@ -212,6 +216,19 @@
     <h1>Daily Learning Coach</h1>
     <p>A fresh 10–15 minute lesson on each of your topics, every day.</p>
     <div class="streak-badge" id="streakBadge">&#128293; Loading streak…</div>
+  </div>
+
+  <!-- API Key card -->
+  <div class="card">
+    <div class="section-label">&#128273; Gemini API Key</div>
+    <div class="api-key-row">
+      <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key here (AIzaSy...)" />
+      <button onclick="saveKey()" style="padding:9px 16px;border-radius:8px;border:0.5px solid var(--border2);background:var(--accent-bg);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+    </div>
+    <div class="key-status" id="keyStatus"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:8px;">
+      Get a free key at <strong>aistudio.google.com/api-keys</strong> &mdash; 1500 lessons/day free. Key is saved only in your browser.
+    </p>
   </div>
 
   <!-- Topics card -->
@@ -246,20 +263,50 @@
   <div id="lessonArea"></div>
 
   <div class="footer">
-    Built with the Anthropic API &mdash; runs 100% in your browser.<br/>
-    Bookmark this file and open it daily. No installation needed.
+    Powered by Google Gemini &mdash; runs 100% in your browser.<br/>
+    Open this file daily and learn something new every day.
   </div>
 
 </div>
 
 <script>
-const COLORS = ['#534AB7','#0F6E56','#993C1D','#185FA5','#3B6D11','#854F0B','#993556'];
-const BG_COLORS = ['#EEEDFE','#E1F5EE','#FAECE7','#E6F1FB','#EAF3DE','#FAEEDA','#FBEAF0'];
+const COLORS   = ['#534AB7','#0F6E56','#993C1D','#185FA5','#3B6D11','#854F0B','#993556'];
+const BG_COLORS= ['#EEEDFE','#E1F5EE','#FAECE7','#E6F1FB','#EAF3DE','#FAEEDA','#FBEAF0'];
 
 const DEFAULT_TOPICS = ['Wealth','Health','Mechanical Design'];
-let topics = JSON.parse(localStorage.getItem('dlc_topics') || 'null') || DEFAULT_TOPICS;
+let topics    = JSON.parse(localStorage.getItem('dlc_topics') || 'null') || DEFAULT_TOPICS;
 let openState = {};
 
+// ── API Key ──────────────────────────────────────────────
+function saveKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  const status = document.getElementById('keyStatus');
+  if (!val.startsWith('AIza')) {
+    status.className = 'key-status err';
+    status.textContent = '⚠ That does not look like a valid Gemini key. It should start with AIza…';
+    return;
+  }
+  localStorage.setItem('dlc_gemini_key', val);
+  status.className = 'key-status ok';
+  status.textContent = '✓ Key saved in your browser. You are ready to generate lessons!';
+  document.getElementById('apiKeyInput').value = '';
+}
+
+function getKey() { return localStorage.getItem('dlc_gemini_key') || ''; }
+
+// Load saved key hint on start
+window.addEventListener('DOMContentLoaded', () => {
+  const k = getKey();
+  if (k) {
+    const status = document.getElementById('keyStatus');
+    status.className = 'key-status ok';
+    status.textContent = '✓ API key loaded from your browser. Ready to generate!';
+  }
+  renderChips();
+  updateStreak();
+});
+
+// ── Topics ───────────────────────────────────────────────
 function saveTopics() { localStorage.setItem('dlc_topics', JSON.stringify(topics)); }
 
 function renderChips() {
@@ -267,9 +314,9 @@ function renderChips() {
   c.innerHTML = topics.map((t,i) => `
     <span class="chip" style="background:${BG_COLORS[i%7]};border-color:${COLORS[i%7]};color:${COLORS[i%7]};">
       ${t}
-      <span class="remove" onclick="removeTopic(${i})" title="Remove topic">&#215;</span>
-    </span>
-  `).join('') || '<span style="font-size:13px;color:var(--text3);">No topics yet — add one below.</span>';
+      <span class="remove" onclick="removeTopic(${i})" title="Remove">&#215;</span>
+    </span>`).join('')
+    || '<span style="font-size:13px;color:var(--text3);">No topics yet — add one below.</span>';
 }
 
 function addTopic() {
@@ -278,8 +325,7 @@ function addTopic() {
   if (val && !topics.map(t=>t.toLowerCase()).includes(val.toLowerCase())) {
     topics.push(val); saveTopics(); renderChips();
   }
-  inp.value = '';
-  inp.focus();
+  inp.value = ''; inp.focus();
 }
 
 function removeTopic(i) {
@@ -291,13 +337,13 @@ document.getElementById('newTopic').addEventListener('keydown', e => {
   if (e.key === 'Enter') addTopic();
 });
 
-// Streak logic
+// ── Streak ───────────────────────────────────────────────
 function updateStreak() {
   const today = new Date().toDateString();
-  const last = localStorage.getItem('dlc_last_date');
-  let streak = parseInt(localStorage.getItem('dlc_streak') || '0');
+  const last  = localStorage.getItem('dlc_last_date');
+  let streak  = parseInt(localStorage.getItem('dlc_streak') || '0');
   if (last === today) {
-    // same day, keep streak
+    // same day — no change
   } else if (last === new Date(Date.now() - 86400000).toDateString()) {
     streak++;
     localStorage.setItem('dlc_streak', streak);
@@ -311,6 +357,7 @@ function updateStreak() {
   el.textContent = streak > 1 ? `\uD83D\uDD25 ${streak}-day streak!` : '\uD83C\uDF31 Day 1 — welcome!';
 }
 
+// ── Cards ────────────────────────────────────────────────
 function toggleCard(id) {
   openState[id] = !openState[id];
   document.getElementById('body-'+id).classList.toggle('open', openState[id]);
@@ -318,12 +365,19 @@ function toggleCard(id) {
   document.getElementById('chev-'+id).classList.toggle('open', openState[id]);
 }
 
+// ── Generate ─────────────────────────────────────────────
 async function generateLessons() {
+  const key = getKey();
+  if (!key) {
+    alert('Please paste and save your Gemini API key first (see the key section above).');
+    return;
+  }
   if (!topics.length) { alert('Please add at least one topic first!'); return; }
-  const btn = document.getElementById('genBtn');
+
+  const btn  = document.getElementById('genBtn');
   const area = document.getElementById('lessonArea');
   const depth = document.getElementById('depthSelect').value;
-  const lang = document.getElementById('langSelect').value;
+  const lang  = document.getElementById('langSelect').value;
 
   btn.disabled = true;
   btn.innerHTML = '<span class="pulse-dot"></span> Generating your lessons…';
@@ -332,12 +386,13 @@ async function generateLessons() {
 
   updateStreak();
 
-  const date = new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const date = new Date().toLocaleDateString('en-IN',
+    {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 
   for (let i = 0; i < topics.length; i++) {
-    const t = topics[i];
+    const t     = topics[i];
     const color = COLORS[i % 7];
-    const id = 'lesson'+i;
+    const id    = 'lesson' + i;
     openState[id] = true;
 
     area.innerHTML += `
@@ -363,19 +418,21 @@ async function generateLessons() {
         </div>
       </div>`;
 
-    fetchLesson(t, depth, lang, id, color, date);
+    fetchLesson(t, depth, lang, id, color, date, key);
   }
 
   btn.innerHTML = '&#8635; Refresh today\'s lessons';
-  btn.disabled = false;
+  btn.disabled  = false;
 }
 
-async function fetchLesson(topic, depth, lang, id, color, date) {
-  const body = document.getElementById('body-'+id);
+// ── Fetch from Gemini ─────────────────────────────────────
+async function fetchLesson(topic, depth, lang, id, color, date, key) {
+  const body = document.getElementById('body-' + id);
+
   const depthDesc = {
-    beginner: 'The learner is a complete beginner. Start from the very basics. Use simple analogies.',
+    beginner:     'The learner is a complete beginner. Start from the very basics. Use simple analogies.',
     intermediate: 'The learner has basic familiarity but wants to go deeper with real substance.',
-    advanced: 'The learner is experienced. Go deep, be technical, challenge them with nuanced insights.'
+    advanced:     'The learner is experienced. Go deep, be technical, challenge them with nuanced insights.'
   }[depth];
 
   const prompt = `You are a brilliant personal mentor giving a focused daily lesson. Today is ${date}.
@@ -393,63 +450,73 @@ THE CORE IDEA
 [Explain the concept clearly. Use one vivid real-world example or analogy. 4-6 sentences.]
 
 KEY PRINCIPLES
-[Exactly 3 bullet points — the most important things to understand about today's concept. Each bullet 1-2 sentences.]
+[Exactly 3 bullet points — the most important things to understand. Each bullet 1-2 sentences.]
 
 PRACTICAL APPLICATION
-[One concrete action or mental exercise the learner can do in 5-10 minutes today. Be very specific. 3-4 sentences.]
+[One concrete action the learner can do in 5-10 minutes today. Be very specific. 3-4 sentences.]
 
 REFLECTION QUESTION
 [One deep, thought-provoking question to sit with today. Just the question.]
 
-Keep it warm, direct, like a mentor speaking — not a textbook. No markdown symbols, no asterisks, no hashes.`;
+Keep it warm and direct like a mentor — not a textbook. No markdown symbols, no asterisks, no hashes.`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0.8 }
       })
     });
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error?.message || 'API error');
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
-    const text = data.content?.[0]?.text || '';
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     renderLesson(body, text, color);
   } catch(e) {
-    body.innerHTML = `<p style="color:#E24B4A;font-size:13px;">&#9888; Could not load lesson: ${e.message}<br/><br/>Make sure you have an internet connection and try refreshing.</p>`;
+    body.innerHTML = `
+      <p style="color:#E24B4A;font-size:13px;">
+        &#9888; Could not load lesson: ${e.message}<br/><br/>
+        Check your API key is correct and your internet is working, then try again.
+      </p>`;
   }
 }
 
+// ── Render lesson text into sections ─────────────────────
 const SECTIONS = [
-  { key: 'TODAY\'S CONCEPT', type: 'normal' },
-  { key: 'THE CORE IDEA', type: 'normal' },
-  { key: 'KEY PRINCIPLES', type: 'bullets' },
-  { key: 'PRACTICAL APPLICATION', type: 'normal' },
-  { key: 'REFLECTION QUESTION', type: 'callout' }
+  { key: "TODAY'S CONCEPT",      type: 'normal'  },
+  { key: 'THE CORE IDEA',        type: 'normal'  },
+  { key: 'KEY PRINCIPLES',       type: 'bullets' },
+  { key: 'PRACTICAL APPLICATION',type: 'normal'  },
+  { key: 'REFLECTION QUESTION',  type: 'callout' }
 ];
 
 function renderLesson(body, text, color) {
   let html = '';
   for (let i = 0; i < SECTIONS.length; i++) {
-    const sec = SECTIONS[i];
+    const sec     = SECTIONS[i];
     const nextKey = SECTIONS[i+1]?.key;
     const startIdx = text.indexOf(sec.key);
     if (startIdx === -1) continue;
     const afterKey = startIdx + sec.key.length;
-    const endIdx = nextKey ? text.indexOf(nextKey, afterKey) : text.length;
-    const raw = text.slice(afterKey, endIdx === -1 ? text.length : endIdx).replace(/^[\s:\-–]+/, '').trim();
+    const endIdx   = nextKey ? text.indexOf(nextKey, afterKey) : text.length;
+    const raw = text
+      .slice(afterKey, endIdx === -1 ? text.length : endIdx)
+      .replace(/^[\s:\-–]+/, '').trim();
 
     html += `<div class="sec-title" style="color:${color};">${sec.key}</div>`;
 
     if (sec.type === 'bullets') {
-      const lines = raw.split('\n').map(l => l.replace(/^[\-•*\d.]+\s*/, '').trim()).filter(Boolean);
+      const lines = raw.split('\n')
+        .map(l => l.replace(/^[\-•*\d.]+\s*/, '').trim())
+        .filter(Boolean);
       html += '<ul>' + lines.map(l => `<li>${l}</li>`).join('') + '</ul>';
     } else if (sec.type === 'callout') {
       html += `<div class="callout" style="border-left-color:${color};">${raw}</div>`;
@@ -460,9 +527,6 @@ function renderLesson(body, text, color) {
   }
   body.innerHTML = html || `<p style="white-space:pre-wrap;">${text}</p>`;
 }
-
-// Init
-renderChips();
 </script>
 </body>
 </html>
